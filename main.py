@@ -13,8 +13,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 
-redditDataTrain = pd.read_csv("reddit_train.csv") #, sep="\n", header=None) 
-redditDataTest = pd.read_csv("reddit_test.csv") # sep="\n", header=None)
+redditDataTrain = pd.read_csv("data/reddit_train.csv") #, sep="\n", header=None) 
+redditDataTest = pd.read_csv("data/reddit_test.csv") # sep="\n", header=None)
 allClasses = ["hockey", "nba", "leagueoflegends", "soccer", "funny", "movies", "anime", "Overwatch", "trees", "GlobalOffensive", "nfl", "AskReddit", "gameofthrones", "conspiracy", "worldnews", "wow", "europe", "canada", "Music", "baseball"]
 
 redditDataTrain.loc[redditDataTrain["subreddits"] == 'hockey', "subreddits"] = 0
@@ -119,3 +119,7 @@ print(counter/len(pred))
 # print(NumberOfClass(redditDataTrain))
 # print(DataCleaning(redditDataTrain))
 # print(redditDataTrain.iloc[:,1])
+
+
+if __name__ == "__main__":
+    pass
