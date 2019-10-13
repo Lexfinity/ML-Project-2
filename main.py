@@ -15,6 +15,9 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn import tree
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold
+from nltk.collocations import BigramCollocationFinder
+from nltk.metrics import BigramAssocMeasures
+from nltk.stem import WordNetLemmatizer
 
 
 redditDataTrain = pd.read_csv("data/reddit_train.csv") #, sep="\n", header=None) 
@@ -53,8 +56,8 @@ commentsTest = redditDataTest.iloc[:,1]
 # print(subredditsTrain)
 # print(commentsTest)
 
-
-tfidf = TfidfVectorizer(stop_words='english')
+lemmatizer = WordNetLemmatizer()
+tfidf = TfidfVectorizer(stop_words='english', smooth_idf=True, sublinear_tf=True, norm='l2')
 cv = CountVectorizer()
 lr = LogisticRegression()
 multiNB = MultinomialNB()
@@ -67,14 +70,15 @@ def getScoretWithModel(model, x_train, x_test, y_train, y_test):
     return model.score(x_test, y_test)
 
 # x_train, x_test, y_train, y_test = train_test_split(commentsTrain, subredditsTrain, test_size=0.2, random_state=4)
-
+results = []
 for train_index, test_index in kf.split(commentsTrain, subredditsTrain):
     x_train, x_test, y_train, y_test = commentsTrain[train_index], commentsTrain[test_index], subredditsTrain[train_index], subredditsTrain[test_index]
     redditDataTrainTF = tfidf.fit_transform(x_train)
     redditDataTestTF = tfidf.transform(x_test)
     redditDataTrainTF.toarray()
-    print(getScoretWithModel(lr, redditDataTrainTF, redditDataTestTF, y_train, y_test))
-
+    results.append(getScoretWithModel(multiNB, redditDataTrainTF, redditDataTestTF, y_train, y_test))
+    print(results)
+print(sum(results)/len(results))
 
 # redditDataTrainTF = tfidf.fit_transform(x_train)
 # redditDataTestTF = tfidf.transform(x_test)
