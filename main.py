@@ -57,7 +57,7 @@ commentsTest = redditDataTest.iloc[:,1]
 # print(commentsTest)
 
 lemmatizer = WordNetLemmatizer()
-tfidf = TfidfVectorizer(stop_words='english', smooth_idf=True, sublinear_tf=True, norm='l2')
+tfidf = TfidfVectorizer(stop_words='english', smooth_idf=True, sublinear_tf=True, norm='l2',)
 cv = CountVectorizer()
 lr = LogisticRegression()
 multiNB = MultinomialNB()
@@ -76,9 +76,12 @@ for train_index, test_index in kf.split(commentsTrain, subredditsTrain):
     redditDataTrainTF = tfidf.fit_transform(x_train)
     redditDataTestTF = tfidf.transform(x_test)
     redditDataTrainTF.toarray()
-    results.append(getScoretWithModel(multiNB, redditDataTrainTF, redditDataTestTF, y_train, y_test))
+    results.append(getScoretWithModel(lr, redditDataTrainTF, redditDataTestTF, y_train, y_test))
     print(results)
 print(sum(results)/len(results))
+pred = lr.predict(redditDataTestTF)
+# print(pred)
+pred = pd.DataFrame(pred, columns=['Category']).to_csv("testResults.csv")
 
 # redditDataTrainTF = tfidf.fit_transform(x_train)
 # redditDataTestTF = tfidf.transform(x_test)
@@ -186,3 +189,4 @@ print(sum(results)/len(results))
 
 if __name__ == "__main__":
     pass
+
