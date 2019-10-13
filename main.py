@@ -14,7 +14,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 from sklearn import tree
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import KFold
+from sklearn.model_selection import StratifiedKFold
 
 
 redditDataTrain = pd.read_csv("data/reddit_train.csv") #, sep="\n", header=None) 
@@ -59,28 +59,32 @@ cv = CountVectorizer()
 lr = LogisticRegression()
 multiNB = MultinomialNB()
 dtc = tree.DecisionTreeClassifier()
-kf = KFold(n_splits=5)
-
-
-
-x_train, x_test, y_train, y_test = train_test_split(commentsTrain, subredditsTrain, test_size=0.2, random_state=4)
-
-
-
-
-redditDataTrainTF = tfidf.fit_transform(x_train)
-redditDataTestTF = tfidf.transform(x_test)
-redditDataTrainTF.toarray()
-redditDataTestFinal = tfidf.transform(commentsTest)
+kf = StratifiedKFold(n_splits=5)
 
 
 def getScoretWithModel(model, x_train, x_test, y_train, y_test):
     model.fit(x_train, y_train)
     return model.score(x_test, y_test)
 
+# x_train, x_test, y_train, y_test = train_test_split(commentsTrain, subredditsTrain, test_size=0.2, random_state=4)
+
+for train_index, test_index in kf.split(commentsTrain, subredditsTrain):
+    x_train, x_test, y_train, y_test = commentsTrain[train_index], commentsTrain[test_index], subredditsTrain[train_index], subredditsTrain[test_index]
+    redditDataTrainTF = tfidf.fit_transform(x_train)
+    redditDataTestTF = tfidf.transform(x_test)
+    redditDataTrainTF.toarray()
+    print(getScoretWithModel(lr, redditDataTrainTF, redditDataTestTF, y_train, y_test))
+
+
+# redditDataTrainTF = tfidf.fit_transform(x_train)
+# redditDataTestTF = tfidf.transform(x_test)
+# redditDataTrainTF.toarray()
+# redditDataTestFinal = tfidf.transform(commentsTest)
+
+
 
 # print("dtc: " + getScoretWithModel(dtc, redditDataTrainTF, redditDataTestTF, y_train, y_test))
-print(getScoretWithModel(lr, redditDataTrainTF, redditDataTestTF, y_train, y_test))
+# print(getScoretWithModel(lr, redditDataTrainTF, redditDataTestTF, y_train, y_test))
 
 # redditDataTrainCV = cv.fit_transform(x_train)
 # redditDataTestCV = cv.transform(x_test)
