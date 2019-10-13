@@ -177,4 +177,4 @@ print(getScoretWithModel(lr, redditDataTrainTF, redditDataTestTF, y_train, y_tes
 
 
 if __name__ == "__main__":
-    print('test push')
+    pass
