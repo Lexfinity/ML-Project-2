@@ -1,3 +1,5 @@
 .ipynb_checkpoints
 .vscode
 *.pyc
+data/test.csv
+data/scrap_subreddits.py

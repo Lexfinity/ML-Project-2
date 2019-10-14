@@ -83,10 +83,10 @@ for train_index, test_index in kf.split(commentsTrain, subredditsTrain):
     results.append(getScoretWithModel(lr, redditDataTrainTF, redditDataTestTF, y_train, y_test))
     print(results)
 print(sum(results)/len(results))
-# redditDataTestFinal = tfidf.transform(commentsTest)
-# pred = lr.predict(redditDataTestFinal)
-# # print(pred)
-# pred = pd.DataFrame(pred, columns=['Category']).to_csv("testResults2.csv")
+# TODO: train with the entire data set then, not just one piece fo data
+pred = lr.predict(redditDataTestTF)
+# print(pred)
+pred = pd.DataFrame(pred, columns=['Category']).to_csv("testResults.csv")
 
 # redditDataTrainTF = tfidf.fit_transform(x_train)
 # redditDataTestTF = tfidf.transform(x_test)

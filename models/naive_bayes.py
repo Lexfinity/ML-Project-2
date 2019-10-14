@@ -5,11 +5,13 @@ from functools import partial
 
 
 class MultiNomialNB:
-    def __init__(self):
+    def __init__(self, smoothing_factor=0.01):
         self.thetak = defaultdict(float)
         # self.thetajk = defaultdict(partial(np.ndarray, 0))
         self.thetajk= []
         self.classes = []
+        self.smoothing_factor = smoothing_factor
+        print("smoothing factor", self.smoothing_factor)
         
     def fit(self, X, y):
         self.classes = y.unique()
@@ -19,12 +21,10 @@ class MultiNomialNB:
             self.thetak[k] = (y==k).sum()/float(y.shape[0])
             indices = np.where(y==k)[0]
             filteredX = X[indices]
-            self.thetajk[i] = (filteredX.sum(axis=0)+0.01)/float(filteredX.shape[0]+0.02)
+            self.thetajk[i] = (filteredX.sum(axis=0)+(1*self.smoothing_factor))/float(filteredX.shape[0]+(2*self.smoothing_factor))
             self.thetajk[i] = self.thetajk[i]
-        print(self.thetak, self.thetajk)
-    
+            
     def predict(self, X):
-        print(self.thetajk.shape, X.shape)
         left = X.dot(np.log(self.thetajk).T)
         right = (1-X.toarray()).dot(np.log(1-self.thetajk).T)
         temp_sum = np.add(left, right)
@@ -32,9 +32,7 @@ class MultiNomialNB:
         return self.classes[max_num]
 
     def score(self, X, y):
-        y_pred = self.predict(X)
-        print(y_pred)
-        
+        y_pred = self.predict(X)        
         score = (y_pred==y).sum()/float(y.shape[0])
         return score
 
