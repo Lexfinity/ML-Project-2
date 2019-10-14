@@ -56,8 +56,10 @@ commentsTest = redditDataTest.iloc[:,1]
 # print(subredditsTrain)
 # print(commentsTest)
 
+# stopWords = ["the", "and", "is", "upvote", "downvote", "I", "this", "like", "with", "at", "can", "my", "your", "karma", "they", "there", "of", "be", "an", "a", "to", "in", "you", "that", "are", "he", "she", "when", "if", "or", "have", "had", "so", "then", "them", "will", "their", "on", "from", "by"]
+
 lemmatizer = WordNetLemmatizer()
-tfidf = TfidfVectorizer(stop_words='english', smooth_idf=True, sublinear_tf=True, norm='l2',)
+tfidf = TfidfVectorizer(stop_words="english", smooth_idf=True, sublinear_tf=True, norm='l2', use_idf=True)
 cv = CountVectorizer()
 lr = LogisticRegression()
 multiNB = MultinomialNB()
@@ -69,19 +71,22 @@ def getScoretWithModel(model, x_train, x_test, y_train, y_test):
     model.fit(x_train, y_train)
     return model.score(x_test, y_test)
 
+
+
 # x_train, x_test, y_train, y_test = train_test_split(commentsTrain, subredditsTrain, test_size=0.2, random_state=4)
 results = []
 for train_index, test_index in kf.split(commentsTrain, subredditsTrain):
     x_train, x_test, y_train, y_test = commentsTrain[train_index], commentsTrain[test_index], subredditsTrain[train_index], subredditsTrain[test_index]
     redditDataTrainTF = tfidf.fit_transform(x_train)
     redditDataTestTF = tfidf.transform(x_test)
-    redditDataTrainTF.toarray()
+    # redditDataTrainTF.toarray()
     results.append(getScoretWithModel(lr, redditDataTrainTF, redditDataTestTF, y_train, y_test))
     print(results)
 print(sum(results)/len(results))
-pred = lr.predict(redditDataTestTF)
-# print(pred)
-pred = pd.DataFrame(pred, columns=['Category']).to_csv("testResults.csv")
+# redditDataTestFinal = tfidf.transform(commentsTest)
+# pred = lr.predict(redditDataTestFinal)
+# # print(pred)
+# pred = pd.DataFrame(pred, columns=['Category']).to_csv("testResults2.csv")
 
 # redditDataTrainTF = tfidf.fit_transform(x_train)
 # redditDataTestTF = tfidf.transform(x_test)
