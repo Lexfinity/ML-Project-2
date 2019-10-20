@@ -3,3 +3,5 @@
 *.pyc
 data/test.csv
 data/scrap_subreddits.py
+.DS_Store
+.idea
